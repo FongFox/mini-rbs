@@ -1,0 +1,14 @@
+# Build artifacts
+mini-rbs
+*.o
+*.out
+
+# CLion project files
+.idea/
+
+# Autotools (nếu dùng sau này)
+autom4te.cache/
+config.log
+config.status
+Makefile.in
+aclocal.m4
