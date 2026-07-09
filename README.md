@@ -1,42 +1,42 @@
 # MiniRBS — Mini Radio Base Station Simulator
 
-*(English version: [README.md](README.md))*
+A small-scale simulation of a Radio Base Station (RBS) in a mobile network, written in **plain C** on Linux. A personal project built to practice core telecom software engineering skills: socket programming, state machines, Makefile/Autotools, unit testing, debugging with GDB, and memory checking with Valgrind.
 
-Mô phỏng thu nhỏ một trạm phát sóng (RBS – Radio Base Station) trong mạng di động, viết bằng **C thuần** trên Linux. Dự án cá nhân xây dựng để luyện các kỹ năng cốt lõi của lập trình phần mềm viễn thông: socket programming, state machine, Makefile/Autotools, unit test, debug bằng GDB và kiểm tra memory bằng Valgrind.
+*(Bản tiếng Việt: [README.vi.md](README.vi.md))*
 
-## Bối cảnh
+## Background
 
-Trong mạng di động, RBS (gọi là eNB ở 4G, gNB ở 5G) là điểm giao tiếp vô tuyến giữa UE (User Equipment — thiết bị đầu cuối như điện thoại) và phần còn lại của mạng. Dự án này mô phỏng lại, ở quy mô rất nhỏ, cách một RBS quản lý kết nối với nhiều UE cùng lúc, dùng giao thức bản tin đơn giản (ATTACH / PING / DETACH) qua TCP socket.
+In a mobile network, the RBS (called eNB in 4G, gNB in 5G) is the radio-facing contact point between a UE (User Equipment — a phone or similar device) and the rest of the network. This project simulates, at a very small scale, how an RBS tracks and manages connections with multiple UEs at once, using a simplified text-based message protocol (ATTACH / PING / DETACH) over TCP sockets.
 
-## Trạng thái hiện tại
+## Current status
 
-🚧 Đang trong quá trình xây dựng.
+🚧 Work in progress.
 
-- [x] Môi trường build: biên dịch tay bằng `gcc`, sau đó chuyển sang `Makefile`
-- [x] `struct UE` (id, state) và thao tác qua con trỏ — nền tảng để quản lý danh sách UE sau này
-- [ ] TCP echo server/client (đang làm)
-- [ ] Giao thức ATTACH / PING / DETACH + state machine
-- [ ] Xử lý nhiều UE cùng lúc bằng `select()`
-- [ ] Unit test bằng Check
-- [ ] Bash script build + test tự động
-- [ ] Autotools hoá (`configure.ac` / `Makefile.am`) — nếu kịp thời gian
-- [ ] Debug Journal: 1 bug tìm bằng GDB, 1 memory leak bắt bằng Valgrind
+- [x] Basic build workflow: manual `gcc` compilation, then a `Makefile`
+- [x] `struct UE` (id, state) and pointer-based access — the foundation for tracking a list of UEs later
+- [ ] TCP echo server/client (in progress)
+- [ ] ATTACH / PING / DETACH protocol + state machine
+- [ ] Handling multiple UEs concurrently with `select()`
+- [ ] Unit tests with Check
+- [ ] Bash script for automated build + test
+- [ ] Autotools setup (`configure.ac` / `Makefile.am`) — time permitting
+- [ ] Debug journal: one bug found with GDB, one memory leak caught with Valgrind
 
-## Build & chạy
+## Build & run
 
-Yêu cầu: `gcc`, `make`, Linux (đã test trên Linux Mint).
+Requires: `gcc`, `make`, Linux (tested on Linux Mint).
 
 ```bash
 make
 ./mini-rbs
 ```
 
-`make` chỉ biên dịch lại khi mã nguồn thay đổi (so sánh timestamp), không rebuild nếu không cần.
+`make` only recompiles when the source has changed (based on file timestamps), so it skips rebuilding when nothing is new.
 
-## Công nghệ dự kiến
+## Planned tech stack
 
-C, POSIX sockets, `select()`, Makefile (Autotools nếu kịp), Check (unit test), Bash, Git, GDB, Valgrind.
+C, POSIX sockets, `select()`, Makefile (Autotools if time allows), Check (unit testing), Bash, Git, GDB, Valgrind.
 
-## Ghi chú
+## Note
 
-Đây là dự án học tập/luyện kỹ năng, xây dựng trong thời gian ngắn để chuẩn bị ứng tuyển vị trí phát triển phần mềm radio/viễn thông. Không triển khai giao thức 3GPP thật — chỉ mô phỏng ý tưởng cốt lõi (kết nối, trạng thái, trao đổi bản tin) ở mức đơn giản hoá, đủ để giải thích rõ trong phỏng vấn.
+This is a learning/skill-building project, built in a short timeframe to prepare for a radio/telecom software development internship application. It does not implement real 3GPP protocols — it simulates the core ideas (connection, state, message exchange) at a simplified level, enough to explain clearly in an interview.
