@@ -1,7 +1,5 @@
 # MiniRBS — Mini Radio Base Station Simulator
 
-*(English version: [README.md](README.md))*
-
 Mô phỏng thu nhỏ một trạm phát sóng (RBS – Radio Base Station) trong mạng di động, viết bằng **C thuần** trên Linux. Dự án cá nhân xây dựng để luyện các kỹ năng cốt lõi của lập trình phần mềm viễn thông: socket programming, state machine, Makefile/Autotools, unit test, debug bằng GDB và kiểm tra memory bằng Valgrind.
 
 ## Bối cảnh
