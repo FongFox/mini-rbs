@@ -5,18 +5,9 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+#include "protocol.h"
+
 #define MAX_CLIENTS 5
-
-enum UEState {
-    IDLE,
-    ATTACHED
-};
-
-struct UE {
-    int socket;
-    int id;
-    enum UEState state;
-};
 
 int main() {
     printf("MiniRBS server starting...\n");
@@ -57,7 +48,6 @@ int main() {
         if (FD_ISSET(sockfd, &read_fds)) {
             int new_fd = accept(sockfd, NULL, NULL);
 
-
             int placed = 0;
             for (int i = 0; i < MAX_CLIENTS; i++) {
                 if (clients[i].socket == -1) {
@@ -77,7 +67,6 @@ int main() {
             }
         }
 
-
         for (int i = 0; i < MAX_CLIENTS; i++) {
             if (clients[i].socket != -1 && FD_ISSET(clients[i].socket, &read_fds)) {
                 char buffer[1024];
@@ -93,31 +82,13 @@ int main() {
                 buffer[strcspn(buffer, "\n")] = '\0';
                 printf("UE %d received: %s\n", clients[i].id, buffer);
 
-                if (strcmp(buffer, "ATTACH_REQUEST") == 0) {
-                    if (clients[i].state == IDLE) {
-                        send(clients[i].socket, "ATTACH_ACCEPT\n", strlen("ATTACH_ACCEPT\n"), 0);
-                        clients[i].state = ATTACHED;
-                    } else {
-                        send(clients[i].socket, "ATTACH_REJECT\n", strlen("ATTACH_REJECT\n"), 0);
-                    }
-                } else if (strcmp(buffer, "PING") == 0) {
-                    if (clients[i].state == ATTACHED) {
-                        send(clients[i].socket, "PONG\n", strlen("PONG\n"), 0);
-                    } else {
-                        send(clients[i].socket, "PING_REJECT\n", strlen("PING_REJECT\n"), 0);
-                    }
-                } else if (strcmp(buffer, "DETACH") == 0) {
-                    if (clients[i].state == ATTACHED) {
-                        send(clients[i].socket, "DETACH_ACCEPT\n", strlen("DETACH_ACCEPT\n"), 0);
-                        clients[i].state = IDLE;
-                        close(clients[i].socket);
-                        clients[i].socket = -1;
-                        continue;
-                    } else {
-                        send(clients[i].socket, "DETACH_REJECT\n", strlen("DETACH_REJECT\n"), 0);
-                    }
-                } else {
-                    send(clients[i].socket, "UNKNOWN_MESSAGE\n", strlen("UNKNOWN_MESSAGE\n"), 0);
+                char response[1024];
+                int should_close = process_message(&clients[i], buffer, response);
+                send(clients[i].socket, response, strlen(response), 0);
+
+                if (should_close) {
+                    close(clients[i].socket);
+                    clients[i].socket = -1;
                 }
             }
         }
