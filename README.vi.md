@@ -14,10 +14,10 @@ Trong mạng di động, RBS (gọi là eNB ở 4G, gNB ở 5G) là điểm giao
 
 - [x] Môi trường build: biên dịch tay bằng `gcc`, sau đó chuyển sang `Makefile`
 - [x] `struct UE` (id, state) và thao tác qua con trỏ — nền tảng để quản lý danh sách UE sau này
-- [x] TCP echo server/client (đang làm)
-- [x] Giao thức ATTACH / PING / DETACH + state machine
-- [ ] Xử lý nhiều UE cùng lúc bằng `select()` (in progress)
-- [ ] Unit test bằng Check
+- [x] TCP server: `socket` → `bind` → `listen` → `accept` → `recv`/`send`, có vòng lặp nhận nhiều bản tin trong 1 kết nối
+- [x] Giao thức ATTACH / PING / DETACH + state machine (`enum UEState`, mỗi bản tin đều kiểm tra state trước khi accept/reject)
+- [x] Xử lý nhiều UE cùng lúc bằng `select()` — mảng UE kích thước cố định, có nhánh từ chối khi đầy ("server full"), dọn dẹp đúng cách (không rò rỉ file descriptor)
+- [ ] Unit test bằng Check (đang làm)
 - [ ] Bash script build + test tự động
 - [ ] Autotools hoá (`configure.ac` / `Makefile.am`) — nếu kịp thời gian
 - [ ] Debug Journal: 1 bug tìm bằng GDB, 1 memory leak bắt bằng Valgrind

@@ -14,10 +14,10 @@ In a mobile network, the RBS (called eNB in 4G, gNB in 5G) is the radio-facing c
 
 - [x] Basic build workflow: manual `gcc` compilation, then a `Makefile`
 - [x] `struct UE` (id, state) and pointer-based access — the foundation for tracking a list of UEs later
-- [x] TCP echo server/client
-- [x] ATTACH / PING / DETACH protocol + state machine
-- [ ] Handling multiple UEs concurrently with `select()` (in progress)
-- [ ] Unit tests with Check
+- [x] TCP server: `socket` → `bind` → `listen` → `accept` → `recv`/`send`, with a loop handling multiple messages per connection
+- [x] ATTACH / PING / DETACH protocol + state machine (`enum UEState`, each message checked against current state before accept/reject)
+- [x] Handling multiple UEs concurrently with `select()` — a fixed-size array of UEs, a "server full" rejection path, and correct cleanup (no leaked file descriptors)
+- [ ] Unit tests with Check (in progress)
 - [ ] Bash script for automated build + test
 - [ ] Autotools setup (`configure.ac` / `Makefile.am`) — time permitting
 - [ ] Debug journal: one bug found with GDB, one memory leak caught with Valgrind
