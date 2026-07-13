@@ -203,4 +203,48 @@ main.c:13:43: error: expected ';' before 'int'
 
 ---
 
+## Debug thực hành: GDB & Valgrind (Mốc 6)
+
+### GDB — quy trình cơ bản: đặt breakpoint, chạy, quan sát, tiếp tục
+
+```
+gdb ./ten_chuong_trinh
+(gdb) break ten_file.c:SO_DONG
+(gdb) run
+(gdb) print ten_bien
+(gdb) continue
+```
+
+Vài lưu ý quan trọng đã gặp thực tế:
+- **Luôn `make` lại trước khi debug** — nếu source mới hơn binary, `gdb` sẽ cảnh báo "Source file is more recent than executable", số dòng/giá trị có thể không khớp chính xác.
+- **Không đặt breakpoint vào dòng comment** — `gdb` sẽ tự động dời breakpoint sang dòng có code thật gần nhất, có thể rơi vào nhánh không bao giờ chạy tới, khiến tưởng nhầm "chương trình không dừng" dù không có gì sai.
+- **`continue` không in ra gì cho tới khi có sự kiện breakpoint tiếp theo** — không phải bị treo, chỉ là đang chờ; đừng vội `Ctrl+C` (đó là tín hiệu ngắt thật, khác hẳn ý nghĩa "chờ tiếp").
+- **Kiểm tra process cũ trước khi debug lại** — nếu 1 process `./ten_chuong_trinh` cũ (không qua gdb) vẫn đang chạy ngầm và giữ port, process mới khởi động qua `gdb` sẽ không `bind()` được đúng port đó, khiến kết nối test thực chất "nói chuyện" với process cũ, breakpoint mới không bao giờ chạm tới. Dùng `ps aux | grep <tên>` hoặc tắt hẳn terminal cũ trước khi debug.
+
+### Valgrind — phân biệt các mức độ leak
+
+```
+valgrind --leak-check=full ./ten_chuong_trinh
+```
+
+Báo cáo chỉ in ra đầy đủ **khi chương trình kết thúc** (kể cả kết thúc bằng Ctrl+C), không in giữa chừng.
+
+- **`definitely lost`** — mức nghiêm trọng nhất: chắc chắn mất, không còn con trỏ nào trỏ tới, không cứu lại được. Đây là leak thật cần sửa.
+- **`still reachable`** — KHÔNG bị tính là leak. Nghĩa là vùng nhớ vẫn có ít nhất 1 con trỏ trỏ tới khi chương trình kết thúc (thường là cấp phát nội bộ của thư viện hệ thống/glibc, không liên quan tới code tự viết).
+- Valgrind chỉ thẳng dòng code (`by 0x...: main (file.c:SO_DONG)`) gây ra từng chỗ leak — đọc đúng dòng này để sửa chính xác, không cần đoán.
+
+### `malloc()`/`free()` cơ bản
+
+```c
+#include <stdlib.h>   // bắt buộc để dùng malloc/free
+
+char *p = malloc(100);   // cấp phát 100 byte trên HEAP, gán địa chỉ vào con trỏ p
+// ... dùng p ...
+free(p);                  // bắt buộc phải gọi khi không dùng p nữa, nếu không → memory leak
+```
+
+Khác biệt cốt lõi với biến thường: biến trên **stack** (`int x;`, mảng khai báo cố định) tự động dọn dẹp khi hết phạm vi (scope) — nhưng vùng nhớ từ `malloc()` nằm trên **heap**, không tự dọn dẹp, phải tự tay `free()`.
+
+---
+
 *(Thêm ghi chú mới bên dưới khi học được pattern/gotcha khác trong lúc làm dự án — không cần format cầu kỳ, ghi nhanh là được)*

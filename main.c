@@ -4,6 +4,7 @@
 #include <sys/select.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include "protocol.h"
 
@@ -64,6 +65,11 @@ int main() {
                 printf("Server full, rejecting new connection\n");
                 send(new_fd, "SERVER_FULL\n", strlen("SERVER_FULL\n"), 0);
                 close(new_fd);
+            } else {
+                char *log_message = malloc(100);
+                sprintf(log_message, "Log for UE connected at fd=%d", new_fd);
+                printf("%s\n", log_message);
+                free(log_message);
             }
         }
 
