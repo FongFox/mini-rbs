@@ -10,7 +10,7 @@ Trong mạng di động, RBS (gọi là eNB ở 4G, gNB ở 5G) là điểm giao
 
 ## Trạng thái hiện tại
 
-🚧 Đang trong quá trình xây dựng.
+✅ Hoàn chỉnh — cả 6 Mốc theo kế hoạch đều đã xong.
 
 - [x] Môi trường build: biên dịch tay bằng `gcc`, sau đó chuyển sang `Makefile`
 - [x] `struct UE` (id, state) và thao tác qua con trỏ — nền tảng để quản lý danh sách UE sau này
@@ -19,8 +19,8 @@ Trong mạng di động, RBS (gọi là eNB ở 4G, gNB ở 5G) là điểm giao
 - [x] Xử lý nhiều UE cùng lúc bằng `select()` — mảng UE kích thước cố định, có nhánh từ chối khi đầy ("server full"), dọn dẹp đúng cách (không rò rỉ file descriptor)
 - [x] Unit test bằng Check — tách logic giao thức ra `protocol.h`/`protocol.c` (không phụ thuộc socket), 8 test case phủ đủ các bản tin và nhánh accept/reject
 - [x] Bash script (`build_and_test.sh`) tự động build + test, dùng `set -e` để dừng ngay khi có bước lỗi
-- [ ] Autotools hoá (`configure.ac` / `Makefile.am`) — nếu kịp thời gian
-- [ ] Debug Journal: 1 bug tìm bằng GDB, 1 memory leak bắt bằng Valgrind
+- [x] Debug Journal: 1 bug tìm bằng GDB, 1 memory leak bắt bằng Valgrind — xem [docs/DEBUG_JOURNAL.vi.md](docs/DEBUG_JOURNAL.vi.md)
+- [ ] Autotools hoá (`configure.ac` / `Makefile.am`) — cân nhắc là mục tiêu phụ (optional), quyết định bỏ qua để giữ build đơn giản với Makefile thuần
 
 ## Build & chạy
 
@@ -44,6 +44,7 @@ make test     # build và chạy bộ unit test
 - `test_protocol.c` — unit test (dùng Check)
 - `build_and_test.sh` — tự động hoá build + test chỉ với 1 lệnh
 - `docs/notes.md` — ghi chú kỹ thuật và gotcha gặp phải trong quá trình làm
+- `docs/DEBUG_JOURNAL.md` / `.vi.md` — 1 bug tìm bằng GDB, 1 memory leak tìm bằng Valgrind, có bằng chứng trước/sau
 
 ## Công nghệ dự kiến
 

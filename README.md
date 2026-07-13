@@ -10,7 +10,7 @@ In a mobile network, the RBS (called eNB in 4G, gNB in 5G) is the radio-facing c
 
 ## Current status
 
-🚧 Work in progress.
+✅ Complete — all 6 planned milestones done.
 
 - [x] Basic build workflow: manual `gcc` compilation, then a `Makefile`
 - [x] `struct UE` (id, state) and pointer-based access — the foundation for tracking a list of UEs later
@@ -19,8 +19,8 @@ In a mobile network, the RBS (called eNB in 4G, gNB in 5G) is the radio-facing c
 - [x] Handling multiple UEs concurrently with `select()` — a fixed-size array of UEs, a "server full" rejection path, and correct cleanup (no leaked file descriptors)
 - [x] Unit tests with Check — protocol logic refactored into `protocol.h`/`protocol.c` (decoupled from sockets), 8 test cases covering all messages and accept/reject branches
 - [x] Bash script (`build_and_test.sh`) for automated build + test, using `set -e` to stop on the first failure
-- [ ] Autotools setup (`configure.ac` / `Makefile.am`) — time permitting
-- [ ] Debug journal: one bug found with GDB, one memory leak caught with Valgrind
+- [x] Debug journal: one bug found with GDB, one memory leak caught with Valgrind — see [docs/DEBUG_JOURNAL.md](docs/DEBUG_JOURNAL.md)
+- [ ] Autotools setup (`configure.ac` / `Makefile.am`) — considered as an optional stretch goal, skipped in favor of a plain Makefile to keep the build simple
 
 ## Build & run
 
@@ -44,6 +44,7 @@ make test     # build and run the unit test suite
 - `test_protocol.c` — unit tests (Check framework)
 - `build_and_test.sh` — one-command build + test automation
 - `docs/notes.md` — technical notes and gotchas found along the way
+- `docs/DEBUG_JOURNAL.md` / `.vi.md` — a bug found with GDB and a memory leak found with Valgrind, with before/after evidence
 
 ## Planned tech stack
 
