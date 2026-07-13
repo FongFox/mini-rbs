@@ -17,21 +17,33 @@ Trong mạng di động, RBS (gọi là eNB ở 4G, gNB ở 5G) là điểm giao
 - [x] TCP server: `socket` → `bind` → `listen` → `accept` → `recv`/`send`, có vòng lặp nhận nhiều bản tin trong 1 kết nối
 - [x] Giao thức ATTACH / PING / DETACH + state machine (`enum UEState`, mỗi bản tin đều kiểm tra state trước khi accept/reject)
 - [x] Xử lý nhiều UE cùng lúc bằng `select()` — mảng UE kích thước cố định, có nhánh từ chối khi đầy ("server full"), dọn dẹp đúng cách (không rò rỉ file descriptor)
-- [ ] Unit test bằng Check (đang làm)
-- [ ] Bash script build + test tự động
+- [x] Unit test bằng Check — tách logic giao thức ra `protocol.h`/`protocol.c` (không phụ thuộc socket), 8 test case phủ đủ các bản tin và nhánh accept/reject
+- [x] Bash script (`build_and_test.sh`) tự động build + test, dùng `set -e` để dừng ngay khi có bước lỗi
 - [ ] Autotools hoá (`configure.ac` / `Makefile.am`) — nếu kịp thời gian
 - [ ] Debug Journal: 1 bug tìm bằng GDB, 1 memory leak bắt bằng Valgrind
 
 ## Build & chạy
 
-Yêu cầu: `gcc`, `make`, Linux (đã test trên Linux Mint).
+Yêu cầu: `gcc`, `make`, `check` (thư viện unit test), Linux (đã test trên Linux Mint).
 
 ```bash
-make
+make          # build server
 ./mini-rbs
+
+make test     # build và chạy bộ unit test
+
+./build_and_test.sh   # hoặc chạy cả 2 bước cùng lúc, dừng ngay nếu có lỗi
 ```
 
 `make` chỉ biên dịch lại khi mã nguồn thay đổi (so sánh timestamp), không rebuild nếu không cần.
+
+## Cấu trúc project
+
+- `main.c` — điểm khởi chạy server: setup socket, vòng lặp `select()`, xử lý I/O
+- `protocol.h` / `protocol.c` — logic giao thức/state machine (`process_message`), tách khỏi socket để test trực tiếp được
+- `test_protocol.c` — unit test (dùng Check)
+- `build_and_test.sh` — tự động hoá build + test chỉ với 1 lệnh
+- `docs/notes.md` — ghi chú kỹ thuật và gotcha gặp phải trong quá trình làm
 
 ## Công nghệ dự kiến
 

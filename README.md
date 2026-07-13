@@ -17,21 +17,33 @@ In a mobile network, the RBS (called eNB in 4G, gNB in 5G) is the radio-facing c
 - [x] TCP server: `socket` → `bind` → `listen` → `accept` → `recv`/`send`, with a loop handling multiple messages per connection
 - [x] ATTACH / PING / DETACH protocol + state machine (`enum UEState`, each message checked against current state before accept/reject)
 - [x] Handling multiple UEs concurrently with `select()` — a fixed-size array of UEs, a "server full" rejection path, and correct cleanup (no leaked file descriptors)
-- [ ] Unit tests with Check (in progress)
-- [ ] Bash script for automated build + test
+- [x] Unit tests with Check — protocol logic refactored into `protocol.h`/`protocol.c` (decoupled from sockets), 8 test cases covering all messages and accept/reject branches
+- [x] Bash script (`build_and_test.sh`) for automated build + test, using `set -e` to stop on the first failure
 - [ ] Autotools setup (`configure.ac` / `Makefile.am`) — time permitting
 - [ ] Debug journal: one bug found with GDB, one memory leak caught with Valgrind
 
 ## Build & run
 
-Requires: `gcc`, `make`, Linux (tested on Linux Mint).
+Requires: `gcc`, `make`, `check` (unit test library), Linux (tested on Linux Mint).
 
 ```bash
-make
+make          # build the server
 ./mini-rbs
+
+make test     # build and run the unit test suite
+
+./build_and_test.sh   # or run both steps at once, stops on first failure
 ```
 
 `make` only recompiles when the source has changed (based on file timestamps), so it skips rebuilding when nothing is new.
+
+## Project structure
+
+- `main.c` — server entry point: socket setup, `select()` loop, I/O
+- `protocol.h` / `protocol.c` — protocol/state-machine logic (`process_message`), decoupled from sockets so it can be unit tested directly
+- `test_protocol.c` — unit tests (Check framework)
+- `build_and_test.sh` — one-command build + test automation
+- `docs/notes.md` — technical notes and gotchas found along the way
 
 ## Planned tech stack
 
